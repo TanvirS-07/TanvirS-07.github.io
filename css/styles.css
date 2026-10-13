@@ -129,6 +129,7 @@ details[open] summary .when i { transform: rotate(45deg); }
 .detail ul { list-style: none; display: grid; gap: 10px; }
 .detail li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; }
 .detail li i { color: var(--accent); margin-top: 4px; }
+.detail a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
 
 /* about */
 .bento { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(200px, auto); gap: 14px; margin-top: 56px; }
