@@ -155,3 +155,8 @@ details[open] summary .when i { transform: rotate(45deg); }
 .mail a.addr { font-size: clamp(20px, 2.6vw, 32px); letter-spacing: -.02em; font-weight: 500; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 2px no-repeat; transition: background-size .5s var(--ease); padding-bottom: 4px; }
 .mail a.addr:hover { background-size: 100% 2px; }
 .copy.done { border-color: var(--accent); color: var(--accent); }
+
+footer { border-top: 1px solid var(--line); padding: 28px 0 40px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+.foot a:hover { color: var(--text); }
+.foot nav { display: flex; gap: 22px; }

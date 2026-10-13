@@ -36,3 +36,5 @@ copy.onclick = async () => {
   } catch (e) { label.textContent = 'Press Ctrl+C'; }
   setTimeout(() => { copy.classList.remove('done'); label.textContent = 'Copy email'; icon.className = 'ph ph-copy'; }, 1800);
 };
+
+document.getElementById('yr').textContent = new Date().getFullYear();
