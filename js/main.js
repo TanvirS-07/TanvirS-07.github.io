@@ -32,6 +32,17 @@ const bar = document.getElementById('bar');
 new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting))
   .observe(document.getElementById('sentinel'));
 
+// dark mode
+const root = document.documentElement, themeBtn = document.getElementById('theme');
+const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+const syncIcon = () => themeBtn.innerHTML = `<i class="ph ${isDark() ? 'ph-sun' : 'ph-moon-stars'}"></i>`;
+themeBtn.onclick = () => {
+  root.dataset.theme = isDark() ? 'light' : 'dark';
+  try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+  syncIcon();
+};
+syncIcon();
+
 // logo strip, icons from simple icons
 const slugs = ['typescript','react','nextdotjs','nodedotjs','python','go','postgresql','docker','kubernetes','terraform','githubactions','linux','tailwindcss','git'];
 const track = document.getElementById('track');

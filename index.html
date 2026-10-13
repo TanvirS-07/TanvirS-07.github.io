@@ -9,6 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script>
+  // set theme early so it doesn't flash
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -22,6 +26,7 @@
       <a class="link" href="#work">Work</a>
       <a class="link" href="#experience">Experience</a>
       <a class="link" href="#about">About</a>
+      <button class="icon-btn" id="theme" aria-label="Toggle colour theme"><i class="ph ph-moon-stars"></i></button>
       <a class="btn btn-solid" href="#contact">Get in touch</a>
     </nav>
   </div>
