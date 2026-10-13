@@ -51,7 +51,7 @@ img { display: block; max-width: 100%; }
 .bar-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 10px 0 22px; border-radius: 999px; border: 1px solid transparent; transition: background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease); }
 .bar.stuck .bar-inner { background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-color: var(--line); box-shadow: var(--shadow); }
 .logo { font-weight: 600; font-size: 16px; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
-.mark { width: 28px; height: 28px; border-radius: 50%; background: var(--text); color: var(--bg); display: grid; place-items: center; font: 600 12px var(--mono); }
+.mark { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
 .nav { display: flex; align-items: center; gap: 4px; }
 .nav a.link { font-size: 14px; color: var(--muted); padding: 8px 14px; border-radius: 999px; transition: color .25s, background-color .25s; }
 .nav a.link:hover { color: var(--text); background: var(--accent-tint); }
