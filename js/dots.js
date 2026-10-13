@@ -1,6 +1,6 @@
 // hero dot grid. dots get pushed away from the cursor, and a fake "ghost"
 // cursor wanders around when nobody's moving the mouse (also covers phones).
-// keep clicking it for an easter egg (bottom of the file)
+// click spam easter egg is at the bottom, the page breaking bit is in egg.js
 (() => {
   const canvas = document.getElementById('dots');
   const host = document.getElementById('heroWrap');
@@ -64,8 +64,7 @@
     if (egg.phase) {
       want = 0;
       egg.time += dt;
-      if (egg.phase === 'boom' && egg.time > 0.8) { egg.phase = 'form'; egg.time = 0; }
-      else if (egg.phase === 'form' && egg.time > 4.2) { egg.phase = null; host.classList.remove('egg-on'); }
+      if (egg.phase === 'mend' && egg.time > 1.6) egg.phase = null;
     }
     if (sx < -1e3) { sx = tx; sy = ty; }
     const follow = Math.min(1, dt * (auto ? 3 : 10));
@@ -76,18 +75,15 @@
 
     const ease = Math.min(1, dt * 12);
     for (const d of dots) {
-      if (egg.phase === 'boom') {
-        const damp = Math.pow(0.06, dt);
-        d.x += d.vx * dt; d.y += d.vy * dt;
-        d.vx *= damp; d.vy *= damp;
+      if (egg.phase === 'fall') {
+        if (egg.time > d.delay) { d.vy += 2600 * dt; d.x += d.vx * dt; d.y += d.vy * dt; }
         d.p = 0;
         continue;
       }
-      if (egg.phase === 'form') {
-        const hit = d.tx != null;
-        const e = Math.min(1, dt * (hit ? 4 : 3));
-        d.x += ((hit ? d.tx : d.x0) - d.x) * e; d.y += ((hit ? d.ty : d.y0) - d.y) * e;
-        d.p = hit ? 0.8 + Math.sin(t * 4 + d.tx * 0.03) * 0.2 : 0;
+      if (egg.phase === 'mend') {
+        const e = Math.min(1, dt * 3);
+        d.x += (d.x0 - d.x) * e; d.y += (d.y0 - d.y) * e;
+        d.p = 0;
         continue;
       }
       let ox = 0, oy = 0, p = 0;
@@ -128,14 +124,14 @@
       ctx.fillRect(0, 0, W, H);
     }
     // draw all the normal dots in one path, way faster than one by one
-    ctx.fillStyle = rgba(colors.text, egg.phase === 'form' ? 0.08 : 0.26);
+    ctx.fillStyle = rgba(colors.text, 0.26);
     ctx.beginPath();
     for (const d of dots) if (d.p <= 0.04) { ctx.moveTo(d.x + 1.6, d.y); ctx.arc(d.x, d.y, 1.6, 0, Math.PI * 2); }
     ctx.fill();
     for (const d of dots) if (d.p > 0.04) {
       ctx.fillStyle = rgba(colors.accent, 0.45 + d.p * 0.55);
       ctx.beginPath();
-      ctx.arc(d.x, d.y, egg.phase === 'form' ? 2.2 : 1.6 + d.p * 2.6, 0, Math.PI * 2);
+      ctx.arc(d.x, d.y, 1.6 + d.p * 2.6, 0, Math.PI * 2);
       ctx.fill();
     }
   };
@@ -188,53 +184,16 @@
     tipTimer = setTimeout(() => tip.classList.remove('show'), 1900);
   };
 
-  // draw the text offscreen and send random dots to points inside the letters
-  const markText = () => {
-    const off = document.createElement('canvas');
-    off.width = Math.ceil(W); off.height = Math.ceil(H);
-    const o = off.getContext('2d');
-    const wide = W >= 1024;
-    const lines = wide ? ['HIRE ME?'] : ['HIRE', 'ME?'];
-    const boxW = wide ? W * 0.5 : W * 0.84;
-    const cx = wide ? W * 0.7 : W * 0.5, cy = H * 0.5;
-    o.font = '800 200px Geist, system-ui, sans-serif';
-    const widest = Math.max(...lines.map(l => o.measureText(l).width));
-    const size = Math.min((200 * boxW) / widest, wide ? H * 0.32 : H * 0.26);
-    o.font = `800 ${size}px Geist, system-ui, sans-serif`;
-    o.textAlign = 'center'; o.textBaseline = 'middle';
-    const lh = size * 0.95, top = cy - (lh * lines.length) / 2;
-    lines.forEach((l, i) => o.fillText(l, cx, top + lh * (i + 0.5)));
-    const data = o.getImageData(0, 0, off.width, off.height).data;
-    const inside = (x, y) => data[(Math.round(y) * off.width + Math.round(x)) * 4 + 3] > 128;
-
-    // bigger step if there'd be more points than dots
-    let step = Math.max(7, size / 18), pts;
-    do {
-      pts = [];
-      for (let y = step / 2; y < H; y += step) for (let x = step / 2; x < W; x += step) if (inside(x, y)) pts.push([x, y]);
-      step *= 1.15;
-    } while (pts.length > dots.length * 0.85);
-
-    for (const d of dots) d.tx = null;
-    const pool = dots.slice();
-    for (let i = pool.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [pool[i], pool[j]] = [pool[j], pool[i]]; }
-    pts.forEach(([x, y], i) => { pool[i].tx = x; pool[i].ty = y; });
-  };
-
-  const boom = (x, y) => {
-    markText();
-    const reach = Math.max(W, H);
+  // dots fall with the page and come back when it's fixed
+  addEventListener('pagebreak', () => {
+    egg.phase = 'fall'; egg.time = 0;
     for (const d of dots) {
-      const dx = d.x - x, dy = d.y - y, dist = Math.hypot(dx, dy) || 1;
-      const speed = (650 + Math.random() * 550) * Math.max(0.3, 1 - dist / reach);
-      d.vx = (dx / dist) * speed + (Math.random() - 0.5) * 240;
-      d.vy = (dy / dist) * speed + (Math.random() - 0.5) * 240;
+      d.vx = (Math.random() - 0.5) * 160;
+      d.vy = -Math.random() * 260;
+      d.delay = 0.3 + Math.random() * 0.6;
     }
-    ripples.push({ x, y, age: 0, power: 2.5 });
-    egg.phase = 'boom'; egg.time = 0;
-    host.classList.add('egg-on');
-    host.classList.remove('shake'); void host.offsetWidth; host.classList.add('shake');
-  };
+  });
+  addEventListener('pagemend', () => { egg.phase = reduce ? null : 'mend'; egg.time = 0; });
 
   host.addEventListener('pointerdown', e => {
     if (e.target.closest('a, button')) return;
@@ -247,9 +206,9 @@
     egg.count++;
     if (egg.count >= 9) {
       egg.count = 0;
-      if (reduce) { say('OK, you win. Hire me?', x, y, true); return; }
+      egg.phase = 'wait';
       say('Fine. You asked for it.', x, y, true);
-      boom(x, y);
+      setTimeout(() => dispatchEvent(new CustomEvent('pagebreak')), reduce ? 400 : 900);
       return;
     }
     if (!reduce) ripples.push({ x, y, age: 0, power: 1 + egg.count * 0.3 });
