@@ -87,3 +87,22 @@ h1 .w { display: inline-block; }
 .track span { width: 30px; height: 30px; flex-shrink: 0; background: var(--muted); -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; transition: background-color .25s; }
 .track span:hover { background: var(--accent); }
 @keyframes slide { to { transform: translateX(-50%); } }
+
+/* sections */
+section { padding: 128px 0; }
+.eyebrow { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); margin-bottom: 18px; }
+h2 { font-size: clamp(34px, 4.2vw, 56px); line-height: 1.05; letter-spacing: -.04em; font-weight: 600; }
+.sub { color: var(--muted); font-size: 17px; max-width: 52ch; margin-top: 16px; }
+
+/* projects */
+.work-list { margin-top: 56px; border-top: 1px solid var(--text); }
+.row { display: grid; grid-template-columns: 1.1fr 1.4fr auto; gap: 32px; align-items: center; padding: 34px 0; border-bottom: 1px solid var(--line); position: relative; }
+.row h3 { font-size: clamp(26px, 3vw, 40px); letter-spacing: -.035em; font-weight: 600; line-height: 1.1; transition: transform .5s var(--ease), color .3s; }
+.row p { color: var(--muted); font-size: 16px; max-width: 46ch; }
+.row .meta { display: flex; align-items: center; gap: 16px; font: 13px var(--mono); color: var(--muted); }
+.row .go { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); display: grid; place-items: center; font-size: 18px; color: var(--text); transition: background-color .3s, color .3s, border-color .3s, transform .4s var(--ease); }
+.row:hover h3 { transform: translateX(14px); color: var(--accent); }
+.row:hover .go { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: rotate(-45deg); }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.tags span { font: 12px var(--mono); padding: 3px 10px; border-radius: 999px; background: var(--accent-tint); color: var(--text); }
+.row .thumb { display: none; }
