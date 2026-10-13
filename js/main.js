@@ -1,5 +1,32 @@
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// split headline into words so they can animate in one by one
+(function splitWords(el) {
+  let n = 0;
+  const walk = node => [...node.childNodes].forEach(c => {
+    if (c.nodeType === 3) {
+      const f = document.createDocumentFragment();
+      c.textContent.split(/(\s+)/).forEach(t => {
+        if (!t.trim()) return f.append(t);
+        const s = document.createElement('span');
+        s.className = 'w'; s.textContent = t; s.style.setProperty('--d', n++);
+        f.append(s);
+      });
+      c.replaceWith(f);
+    } else walk(c);
+  });
+  walk(el);
+})(document.getElementById('h1'));
+// force reflow or the transition doesn't run
+void document.body.offsetWidth;
+document.body.classList.add('loaded');
+
+// fade stuff in on scroll
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
 // logo strip, icons from simple icons
 const slugs = ['typescript','react','nextdotjs','nodedotjs','python','go','postgresql','docker','kubernetes','terraform','githubactions','linux','tailwindcss','git'];
 const track = document.getElementById('track');

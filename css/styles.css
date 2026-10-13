@@ -160,3 +160,9 @@ footer { border-top: 1px solid var(--line); padding: 28px 0 40px; }
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
 .foot a:hover { color: var(--text); }
 .foot nav { display: flex; gap: 22px; }
+
+/* scroll reveal */
+.rv { opacity: 0; transform: translateY(24px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: calc(var(--d, 0) * 80ms); }
+.rv.in { opacity: 1; transform: none; }
+h1 .w { opacity: 0; transform: translateY(.5em); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--d) * 55ms + 100ms); }
+.loaded h1 .w { opacity: 1; transform: none; }
