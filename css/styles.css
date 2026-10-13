@@ -36,3 +36,12 @@ img { display: block; max-width: 100%; }
 ::selection { background: var(--accent); color: var(--on-accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font: 500 14px var(--sans); padding: 12px 20px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; transition: transform .3s var(--ease), background-color .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease); }
+.btn:active { transform: scale(.97); }
+.btn-solid { background: var(--text); color: var(--bg); }
+.btn-solid:hover { background: var(--accent); color: var(--on-accent); }
+.btn-line { border-color: var(--line); color: var(--text); background: transparent; }
+.btn-line:hover { border-color: var(--text); }
+.btn i { font-size: 16px; }
