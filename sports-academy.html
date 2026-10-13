@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sports Academy Platform · Tanvir Singh</title>
+<meta name="description" content="Case study: a booking and coaching platform for a cricket academy, built with React, FastAPI and PostgreSQL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script>
+  // set theme early so it doesn't flash
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="sentinel" style="position:absolute;top:0;height:40px;width:1px"></div>
+
+<header class="bar wrap" id="bar">
+  <div class="bar-inner">
+    <a href="index.html" class="logo" aria-label="Tanvir Singh, home"><img class="mark" src="images/avatar.jpg" alt="" width="32" height="32">Tanvir Singh</a>
+    <nav class="nav case-nav" aria-label="Primary">
+      <a class="link" href="index.html#work"><i class="ph ph-arrow-left"></i> All work</a>
+      <button class="icon-btn" id="theme" aria-label="Toggle colour theme"><i class="ph ph-moon-stars"></i></button>
+    </nav>
+  </div>
+</header>
+
+<main class="case wrap">
+  <div class="case-head">
+    <div class="eyebrow rv">Case study</div>
+    <h1 class="rv">Sports Academy Platform</h1>
+    <p class="case-lede rv">Bookings, attendance and player notes for Precision Cricket Academy, the cricket academy I co-founded. It replaced a mix of phone calls, messages and spreadsheets.</p>
+    <dl class="case-meta rv">
+      <div><dt>Role</dt><dd>Solo, full-stack</dd></div>
+      <div><dt>Timeline</dt><dd>Sep to Oct 2026, five phases</dd></div>
+      <div><dt>Stack</dt><dd>React, TypeScript, FastAPI, PostgreSQL, Docker</dd></div>
+      <div><dt>Links</dt><dd class="case-links"><a href="https://precisioncricket.vercel.app" target="_blank" rel="noopener">Live demo <i class="ph ph-arrow-up-right"></i></a><a href="https://github.com/TanvirS-07/sports-academy-platform" target="_blank" rel="noopener">GitHub <i class="ph ph-arrow-up-right"></i></a></dd></div>
+    </dl>
+  </div>
+
+  <figure class="case-shot rv">
+    <img src="images/sa-attendance.jpg" alt="Coach view of a session with each player marked present, absent or excused" width="1400" height="981">
+    <figcaption>Coaches mark attendance once a session starts. The demo uses made-up data.</figcaption>
+  </figure>
+
+  <div class="case-body">
+    <section>
+      <h2 class="rv">The problem</h2>
+      <p class="rv">The academy grew from 5 to 30+ players across two clubs, with two coaches running 30+ sessions a week. Bookings, availability and attendance lived in calls, group chats and spreadsheets. Parents had no single place to book a session or see how their child was going, and coaches had no reliable record of who actually turned up.</p>
+    </section>
+
+    <section>
+      <h2 class="rv">What I built</h2>
+      <p class="rv">A web app with two roles. Public sign-up only creates parent accounts; coach accounts are made with a script.</p>
+      <ul class="case-list rv">
+        <li><strong>Coaches</strong> create programs, enrol players, schedule sessions with a capacity, take attendance and write development notes.</li>
+        <li><strong>Parents</strong> add their children, book them into sessions, cancel before a session starts, and see attendance and every note about their child.</li>
+        <li><strong>Accounts</strong> use Argon2 password hashing, JWT access tokens, refresh tokens in an httpOnly cookie, role checks and login rate limiting.</li>
+        <li><strong>Privacy</strong> is enforced in the API. A child's date of birth is only visible to their parents and their coaches, and a coach only sees attendance and notes from their own programs.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="rv">The tricky parts</h2>
+
+      <h3 class="rv">Two parents, one place left</h3>
+      <p class="rv">If two parents book the last place at the same moment, both requests can read "1 place left" and both succeed. I fixed that in two layers. Every booking or cancellation locks the session's row first, then checks the rules and updates the count in the same transaction, so concurrent requests queue up instead of racing. Behind that, the database itself refuses a booked count above capacity.</p>
+      <pre class="rv"><code>session = lock_session(db, session_id)  # row lock until commit
+if session.booked_count &gt;= session.capacity:
+    raise ConflictError("This session is full", code="SESSION_FULL")
+session.booked_count += 1
+
+# and in the table:
+CheckConstraint("booked_count &lt;= capacity", name="not_overbooked")</code></pre>
+      <p class="rv">To prove it, an integration test starts 8 threads, holds them at a barrier, then releases them all at once to book a session with 1 or 3 places. It checks that exactly that many get booked and everyone else gets "session full". It can't run inside the usual rolled-back test transaction, because the threads only block each other when the data is actually committed.</p>
+
+      <h3 class="rv">Keeping login working on free hosting</h3>
+      <p class="rv">The demo runs the frontend on Vercel and the API on Render, which are different domains. Calling Render directly would turn the refresh-token cookie into a third-party cookie, and many browsers drop those. Instead, Vercel forwards every <code>/api</code> request to Render, so the browser only ever talks to one site. The cookie stays <code>SameSite=Strict</code> and CORS stays turned off.</p>
+
+      <h3 class="rv">Time zones</h3>
+      <p class="rv">Session times are stored in UTC and always shown in Sydney time, whatever time zone a parent's device is set to, so a 4:30 pm session never shows up as 5:30.</p>
+    </section>
+
+    <figure class="case-shot rv">
+      <img src="images/sa-parent.jpg" alt="Parent view of a child's upcoming bookings, attendance and development notes" width="1400" height="1190" loading="lazy">
+      <figcaption>What a parent sees for their child: bookings, attendance and the coach's notes.</figcaption>
+    </figure>
+
+    <section>
+      <h2 class="rv">Testing</h2>
+      <p class="rv">Every change runs the whole suite in GitHub Actions, against a real PostgreSQL database. Runtime and package versions are pinned so it behaves the same locally, in Docker and in CI.</p>
+      <div class="case-stats rv">
+        <div><b>188</b><span>backend tests (pytest)</span></div>
+        <div><b>72</b><span>frontend tests (Vitest)</span></div>
+        <div><b>14</b><span>end-to-end tests (Playwright)</span></div>
+        <div><b>8</b><span>MCP server tests</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="rv">Result</h2>
+      <p class="rv">The platform now runs all of the academy's bookings: 30+ players, 30+ sessions a week, two coaches and two clubs. The public demo runs the same code with made-up data, so anyone can log in as a coach or a parent and try it.</p>
+    </section>
+
+    <section>
+      <h2 class="rv">Known limits</h2>
+      <ul class="case-list rv">
+        <li>The demo is on free tiers, so the first request after 15 quiet minutes waits about a minute while the backend wakes up. A keep-alive ping would fix that but would burn through the database's free compute hours.</li>
+        <li>Login limits are kept in memory, so they reset whenever the backend restarts.</li>
+        <li>Payments are the next phase and aren't built yet.</li>
+      </ul>
+    </section>
+
+    <div class="case-end rv">
+      <a href="https://precisioncricket.vercel.app" target="_blank" rel="noopener" class="btn btn-solid">Try the demo <i class="ph ph-arrow-up-right"></i></a>
+      <a href="https://github.com/TanvirS-07/sports-academy-platform" target="_blank" rel="noopener" class="btn btn-line"><i class="ph ph-github-logo"></i> Read the code</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© <span id="yr"></span> Tanvir Singh</span>
+    <nav aria-label="Social">
+      <a href="https://github.com/TanvirS-07" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/tanvir-singh07" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/case.js"></script>
+</body>
+</html>
