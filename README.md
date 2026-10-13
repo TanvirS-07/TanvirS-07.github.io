@@ -17,3 +17,4 @@ Then visit http://localhost:8000.
 - `index.html` page markup
 - `css/styles.css` design tokens, layout and components
 - `js/main.js` interactions (marquee, project previews, theme, menu)
+- `resume.pdf`
