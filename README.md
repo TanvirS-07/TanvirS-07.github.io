@@ -18,3 +18,7 @@ Then visit http://localhost:8000.
 - `css/styles.css` design tokens, layout and components
 - `js/main.js` interactions (marquee, project previews, theme, menu)
 - `resume.pdf`
+
+## deploying
+
+GitHub Pages from `main`, root folder.
