@@ -205,3 +205,10 @@ h1 .w { opacity: 0; transform: translateY(.5em); transition: opacity .8s var(--e
   .portrait-wrap::before { inset: auto -10px -10px auto; }
 }
 @media (hover: none) { .preview { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+  .rv, h1 .w { opacity: 1; transform: none; }
+  .portrait img { transform: none; }
+}
