@@ -27,6 +27,11 @@ const io = new IntersectionObserver(es => es.forEach(e => {
 }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.rv').forEach(el => io.observe(el));
 
+// header background once you scroll
+const bar = document.getElementById('bar');
+new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting))
+  .observe(document.getElementById('sentinel'));
+
 // logo strip, icons from simple icons
 const slugs = ['typescript','react','nextdotjs','nodedotjs','python','go','postgresql','docker','kubernetes','terraform','githubactions','linux','tailwindcss','git'];
 const track = document.getElementById('track');
