@@ -166,3 +166,42 @@ footer { border-top: 1px solid var(--line); padding: 28px 0 40px; }
 .rv.in { opacity: 1; transform: none; }
 h1 .w { opacity: 0; transform: translateY(.5em); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--d) * 55ms + 100ms); }
 .loaded h1 .w { opacity: 1; transform: none; }
+
+/* mobile */
+@media (max-width: 1023px) {
+  .nav a.link, .nav .btn { display: none; }
+  .menu-toggle { display: grid; }
+  .sheet { display: block; max-height: 0; overflow: hidden; transition: max-height .5s var(--ease); }
+  .sheet.open { max-height: 380px; }
+  .sheet-inner { margin-top: 8px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); padding: 10px; box-shadow: var(--shadow); }
+  .sheet a { display: block; padding: 14px 16px; border-radius: 12px; font-size: 16px; }
+  .sheet a:hover { background: var(--accent-tint); }
+  .hero { grid-template-columns: 1fr; gap: 48px; min-height: 0; padding-top: 48px; }
+  .portrait-wrap { max-width: 420px; }
+  .exp { grid-template-columns: 1fr; gap: 40px; }
+  .exp-head { position: static; }
+  .bento { grid-template-columns: 1fr 1fr; }
+  .c-about, .c-skills { grid-column: span 2; }
+  .c-now, .c-photo { grid-column: span 1; }
+  .c-photo { min-height: 240px; }
+}
+@media (max-width: 767px) {
+  .wrap { padding: 0 16px; }
+  .bar-inner { padding-left: 16px; }
+  section { padding: 88px 0; }
+  .row { grid-template-columns: 1fr auto; gap: 14px 16px; padding: 26px 0; }
+  .row .thumb { display: block; grid-column: 1 / -1; order: -1; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; }
+  .row .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .row p { grid-column: 1 / -1; grid-row: 3; }
+  .row .meta { grid-column: 2; grid-row: 2; }
+  .row:hover h3 { transform: none; }
+  .preview { display: none; }
+  summary { padding: 20px; grid-template-columns: 1fr; }
+  .detail { padding: 0 20px 22px; }
+  .bento { grid-template-columns: 1fr; }
+  .c-about, .c-now, .c-photo, .c-skills { grid-column: span 1; }
+  .c-skills { grid-template-columns: 1fr; padding: 24px; }
+  .cell { padding: 24px; }
+  .portrait-wrap::before { inset: auto -10px -10px auto; }
+}
+@media (hover: none) { .preview { display: none; } }

@@ -43,6 +43,12 @@ themeBtn.onclick = () => {
 };
 syncIcon();
 
+// mobile menu
+const menu = document.getElementById('menu'), sheet = document.getElementById('sheet');
+const setMenu = open => { sheet.classList.toggle('open', open); menu.setAttribute('aria-expanded', open); menu.innerHTML = `<i class="ph ${open ? 'ph-x' : 'ph-list'}"></i>`; };
+menu.onclick = () => setMenu(!sheet.classList.contains('open'));
+sheet.querySelectorAll('a').forEach(a => a.onclick = () => setMenu(false));
+
 // logo strip, icons from simple icons
 const slugs = ['typescript','react','nextdotjs','nodedotjs','python','go','postgresql','docker','kubernetes','terraform','githubactions','linux','tailwindcss','git'];
 const track = document.getElementById('track');
