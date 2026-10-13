@@ -1,24 +1,24 @@
-# Tanvir Singh, portfolio
+# portfolio
 
-Personal portfolio site. Plain HTML, CSS and JavaScript with no build step.
+My personal site. Plain HTML, CSS and JS, no frameworks or build step.
 
-## Run locally
+## running it
 
-Open `index.html` in a browser, or serve the folder:
+Open `index.html`, or serve the folder so the fetches and fonts behave:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then visit http://localhost:8000.
+## layout
 
-## Structure
-
-- `index.html` page markup
-- `css/styles.css` design tokens, layout and components
-- `js/main.js` interactions (marquee, project previews, theme, menu)
+- `index.html` - the page
+- `css/styles.css` - all the styles
+- `js/main.js` - theme toggle, menu, logo strip, project previews
+- `js/dots.js` - the dot grid in the hero
+- `js/egg.js` - try clicking the dots a few times
 - `resume.pdf`
 
 ## deploying
 
-GitHub Pages from `main`, root folder.
+Hosted on GitHub Pages from `main` (Settings > Pages > Deploy from a branch, root folder). `.nojekyll` is there so Pages serves everything as-is.
