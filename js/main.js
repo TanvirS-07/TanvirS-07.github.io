@@ -25,3 +25,14 @@ if (!reduce && matchMedia('(hover: hover)').matches) {
     rows.forEach(o => o._img.classList.toggle('show', o === r));
   }));
 }
+
+// copy email button
+const copy = document.getElementById('copy');
+copy.onclick = async () => {
+  const label = copy.querySelector('span'), icon = copy.querySelector('i');
+  try {
+    await navigator.clipboard.writeText(document.getElementById('addr').textContent);
+    copy.classList.add('done'); label.textContent = 'Copied'; icon.className = 'ph ph-check';
+  } catch (e) { label.textContent = 'Press Ctrl+C'; }
+  setTimeout(() => { copy.classList.remove('done'); label.textContent = 'Copy email'; icon.className = 'ph ph-copy'; }, 1800);
+};

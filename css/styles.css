@@ -147,3 +147,11 @@ details[open] summary .when i { transform: rotate(45deg); }
 .c-skills h3 i { color: var(--accent); font-size: 18px; }
 .c-skills p { color: var(--muted); font-size: 15px; }
 .socials { display: flex; gap: 8px; }
+
+/* contact */
+.contact { padding: 120px 0 64px; }
+.contact h2 { font-size: clamp(40px, 7vw, 104px); letter-spacing: -.05em; line-height: .98; max-width: 12ch; }
+.mail { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 44px; }
+.mail a.addr { font-size: clamp(20px, 2.6vw, 32px); letter-spacing: -.02em; font-weight: 500; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 2px no-repeat; transition: background-size .5s var(--ease); padding-bottom: 4px; }
+.mail a.addr:hover { background-size: 100% 2px; }
+.copy.done { border-color: var(--accent); color: var(--accent); }
