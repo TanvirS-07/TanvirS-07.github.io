@@ -1,5 +1,7 @@
 # portfolio
 
+https://tanvirsingh.me
+
 My personal site. Plain HTML, CSS and JS, no frameworks or build step.
 
 ## running it
@@ -23,4 +25,4 @@ python -m http.server 8000
 
 ## deploying
 
-Hosted on GitHub Pages from `main` (Settings > Pages > Deploy from a branch, root folder). `.nojekyll` is there so Pages serves everything as-is.
+Live at [tanvirsingh.me](https://tanvirsingh.me). Hosted on GitHub Pages from `main` (Settings > Pages > Deploy from a branch, root folder). `CNAME` sets the custom domain and `.nojekyll` makes Pages serve everything as-is.
