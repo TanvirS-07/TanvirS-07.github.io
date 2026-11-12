@@ -18,6 +18,7 @@
   let mx = 0, my = 0, sx = -1e4, sy = -1e4, inside = false;
   const ripples = [];
   const egg = { count: 0, last: 0, phase: null, time: 0 };
+  let hole = null, snow = 0; // hole = space kept clear around the tree (tree.js)
 
   const hexToRgb = hex => {
     let h = hex.trim().replace('#', '');
@@ -43,12 +44,31 @@
     dots = [];
     for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
       const x = ox + i * SPACING, y = oy + j * SPACING;
-      dots.push({ x0: x, y0: y, x, y, p: 0 });
+      dots.push({ x0: x, y0: y, x, y, gx: x, gy: y, p: 0, h: 1 });
     }
+    findHole();
+    snow = 0;
   };
 
-  // figure 8 on the empty right side (under the text on mobile)
+  // fade the dots out around the tree so they don't fight
+  const fade = (x, y) => {
+    if (!hole) return 1;
+    const e = Math.hypot((x - hole.x) / hole.rx, (y - hole.y) / hole.ry);
+    return e >= 1 ? 1 : e <= 0.6 ? 0 : (e - 0.6) / 0.4;
+  };
+  const findHole = () => {
+    const el = document.querySelector('.tree');
+    hole = null;
+    if (el && W) {
+      const r = el.getBoundingClientRect(), c = canvas.getBoundingClientRect();
+      if (r.width) hole = { x: r.left - c.left + r.width / 2, y: r.top - c.top + r.height * 0.56, rx: r.width * 0.46, ry: r.height * 0.52 };
+    }
+    for (const d of dots) d.h = fade(snow ? d.x : d.gx, snow ? d.y : d.gy);
+  };
+
+  // figure 8 on the empty right side (under the text on mobile), or around the tree
   const ghost = () => {
+    if (hole) return [hole.x + Math.sin(t * 0.45) * hole.rx * 1.3, hole.y + Math.sin(t * 0.9 + 0.6) * hole.ry * 0.7];
     const wide = W >= 900;
     const cx = wide ? W * 0.7 : W * 0.5, cy = wide ? H * 0.48 : H * 0.8;
     const rx = wide ? W * 0.17 : W * 0.32, ry = wide ? H * 0.22 : H * 0.08;
@@ -74,6 +94,7 @@
     for (let k = ripples.length - 1; k >= 0; k--) if ((ripples[k].age += dt) > 1.6) ripples.splice(k, 1);
 
     const ease = Math.min(1, dt * 12);
+    if (snow) snow = Math.min(1, snow + dt * 0.8);
     for (const d of dots) {
       if (egg.phase === 'fall') {
         if (egg.time > d.delay) { d.vy += 2600 * dt; d.x += d.vx * dt; d.y += d.vy * dt; }
@@ -85,6 +106,13 @@
         d.x += (d.x0 - d.x) * e; d.y += (d.y0 - d.y) * e;
         d.p = 0;
         continue;
+      }
+      if (snow) {
+        // let it snow. the grid point itself drifts down and wraps back to the top
+        d.y0 += d.vs * snow * dt;
+        d.x0 += Math.sin(t * 0.7 + d.sw) * 12 * snow * dt;
+        if (d.y0 > H + 8) { d.y0 = -8; d.x0 = Math.random() * W; d.x = d.x0; d.y = d.y0; }
+        d.h = fade(d.x, d.y);
       }
       let ox = 0, oy = 0, p = 0;
       const dx = d.x0 - sx, dy = d.y0 - sy;
@@ -124,12 +152,22 @@
       ctx.fillRect(0, 0, W, H);
     }
     // draw all the normal dots in one path, way faster than one by one
-    ctx.fillStyle = rgba(colors.text, 0.26);
+    const base = snow ? 0.38 : 0.26;
+    ctx.fillStyle = rgba(colors.text, base);
     ctx.beginPath();
-    for (const d of dots) if (d.p <= 0.04) { ctx.moveTo(d.x + 1.6, d.y); ctx.arc(d.x, d.y, 1.6, 0, Math.PI * 2); }
+    for (const d of dots) if (d.p <= 0.04 && d.h > 0.99) {
+      const r = snow ? d.sz : 1.6;
+      ctx.moveTo(d.x + r, d.y); ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+    }
     ctx.fill();
-    for (const d of dots) if (d.p > 0.04) {
-      ctx.fillStyle = rgba(colors.accent, 0.45 + d.p * 0.55);
+    for (const d of dots) if (d.p <= 0.04 && d.h > 0.02 && d.h <= 0.99) {
+      ctx.fillStyle = rgba(colors.text, base * d.h);
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, snow ? d.sz : 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    for (const d of dots) if (d.p > 0.04 && d.h > 0.02) {
+      ctx.fillStyle = rgba(colors.accent, (0.45 + d.p * 0.55) * d.h);
       ctx.beginPath();
       ctx.arc(d.x, d.y, 1.6 + d.p * 2.6, 0, Math.PI * 2);
       ctx.fill();
@@ -149,6 +187,12 @@
 
   readColors(); build(); draw(); start();
   new ResizeObserver(() => { build(); draw(); }).observe(canvas);
+  addEventListener('treelayout', () => { findHole(); draw(); });
+  addEventListener('treesnow', () => {
+    if (reduce || snow || egg.phase) return;
+    for (const d of dots) { d.vs = 35 + Math.random() * 60; d.sw = Math.random() * 6.28; d.sz = 1.1 + Math.random() * 1.5; }
+    snow = 0.001;
+  });
   new MutationObserver(() => { readColors(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readColors(); draw(); });
   new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop())).observe(canvas);
@@ -187,6 +231,7 @@
   // dots fall with the page and come back when it's fixed
   addEventListener('pagebreak', () => {
     egg.phase = 'fall'; egg.time = 0;
+    if (snow) { snow = 0; for (const d of dots) { d.x0 = d.gx; d.y0 = d.gy; d.h = fade(d.gx, d.gy); } }
     for (const d of dots) {
       d.vx = (Math.random() - 0.5) * 160;
       d.vy = -Math.random() * 260;
@@ -196,7 +241,7 @@
   addEventListener('pagemend', () => { egg.phase = reduce ? null : 'mend'; egg.time = 0; });
 
   host.addEventListener('pointerdown', e => {
-    if (e.target.closest('a, button')) return;
+    if (e.target.closest('a, button, .tree-slot')) return;
     const r = canvas.getBoundingClientRect();
     const x = e.clientX - r.left, y = e.clientY - r.top;
     const now = performance.now();
