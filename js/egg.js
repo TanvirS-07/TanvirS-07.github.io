@@ -5,7 +5,7 @@
   const root = document.documentElement;
   const GRAVITY = 2600;
   const PIECES = [
-    '.logo', '.nav > *', '.avail', 'h1 .w', '.lede', '.actions .btn', '.track > span',
+    '.logo', '.nav > *', '.avail', 'h1 .w', '.lede', '.actions .btn', '.tree-slot', '.track > span',
     'section .eyebrow', 'section h2', '.sub', '.row', 'details', '.cell', '.mail > *', '.foot > *',
   ];
 

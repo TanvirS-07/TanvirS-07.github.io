@@ -20,6 +20,7 @@ python -m http.server 8000
 - `js/main.js` - theme toggle, menu, logo strip, project previews
 - `js/dots.js` - the dot grid in the hero
 - `js/egg.js` - try clicking the dots a few times
+- `js/tree.js` - christmas tree in the hero, mid nov to early jan (add `?tree` to see it any time)
 - `js/case.js` - small script for the case study page
 - `resume.pdf`
 

@@ -88,6 +88,31 @@ h1 .w { display: inline-block; }
 .field canvas { display: block; width: 100%; height: 100%; }
 .hero-copy { transition: opacity .6s var(--ease); }
 
+/* christmas tree, mid nov to early jan (js/tree.js) */
+.hero.has-tree { grid-template-columns: minmax(0, 1fr) auto; column-gap: 40px; }
+.tree-slot { position: relative; justify-self: end; }
+.tree { display: block; width: clamp(300px, 31vw, 430px); aspect-ratio: 4 / 5; padding: 0; border: 0; border-radius: 24px; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.tree canvas { display: block; width: 100%; height: 100%; }
+.tree-hint { position: absolute; left: 0; right: 0; bottom: -8px; text-align: center; font: 12px var(--mono); color: var(--muted); transition: opacity .5s var(--ease); }
+.tree-hint.gone { opacity: 0; }
+.gift { position: absolute; left: 50%; bottom: 4%; z-index: 2; width: 270px; margin-left: -135px; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.gift[hidden] { display: none; }
+.gift-card { position: relative; width: 100%; padding: 22px 22px 20px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: center; pointer-events: auto; opacity: 0; transform: translateY(70px) scale(.6); transition: opacity .35s var(--ease), transform .7s var(--ease); }
+.gift-card h3 { font-size: 22px; letter-spacing: -.03em; font-weight: 600; margin: 6px 0 16px; }
+.gift-tag { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); }
+.gift-x { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 999px; border: 0; background: none; color: var(--muted); display: grid; place-items: center; cursor: pointer; font-size: 15px; }
+.gift-x:hover { color: var(--text); background: var(--accent-tint); }
+.gift-box { position: relative; width: 66px; height: 58px; margin-top: 14px; opacity: 0; transform: translateY(30px) scale(.4); transition: opacity .3s var(--ease), transform .6s var(--ease); }
+.gift-body, .gift-lid { position: absolute; left: 50%; border-radius: 4px; background: linear-gradient(90deg, transparent 42%, #e9b543 42% 58%, transparent 58%) #d13f3a; }
+.gift-body { bottom: 0; width: 58px; height: 42px; margin-left: -29px; }
+.gift-lid { top: 0; width: 66px; height: 15px; margin-left: -33px; background-color: #b8322e; transition: transform .6s var(--ease), opacity .4s .25s; }
+.gift-lid::before, .gift-lid::after { content: ""; position: absolute; bottom: 100%; left: 50%; width: 14px; height: 10px; border: 3px solid #e9b543; border-radius: 50% 50% 0 50%; }
+.gift-lid::before { margin-left: -15px; }
+.gift-lid::after { margin-left: 1px; border-radius: 50% 50% 50% 0; }
+.gift.in .gift-box { opacity: 1; transform: none; animation: wobble .5s .3s; }
+.gift.open .gift-lid { transform: translate(34px, -46px) rotate(38deg); opacity: 0; }
+.gift.open .gift-card { opacity: 1; transform: none; }
+
 /* easter egg */
 .egg-tip { position: absolute; z-index: 3; pointer-events: none; white-space: nowrap; font: 500 13px var(--mono); padding: 9px 15px; border-radius: 999px; background: var(--text); color: var(--bg); box-shadow: var(--shadow); opacity: 0; transform: translate(-50%, -120%) scale(.85); transition: opacity .25s var(--ease), transform .45s var(--ease); }
 .egg-tip.show { opacity: 1; transform: translate(-50%, -160%) scale(1); }
@@ -236,6 +261,9 @@ h1 .w { opacity: 0; transform: translateY(.5em); transition: opacity .8s var(--e
   .sheet a { display: block; padding: 14px 16px; border-radius: 12px; font-size: 16px; }
   .sheet a:hover { background: var(--accent-tint); }
   .hero { min-height: 0; padding: 48px 0 140px; }
+  .hero.has-tree { grid-template-columns: minmax(0, 1fr); padding-bottom: 72px; }
+  .tree-slot { justify-self: center; margin-top: 40px; }
+  .tree { width: min(340px, 78vw); }
   .field { -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.35), #000 55%, transparent); mask-image: linear-gradient(to bottom, rgba(0,0,0,.35), #000 55%, transparent); }
   .exp { grid-template-columns: 1fr; gap: 40px; }
   .exp-head { position: static; }
