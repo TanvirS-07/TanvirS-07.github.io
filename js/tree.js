@@ -40,13 +40,13 @@
     dark: {
       needle: [[52, 150, 84], [68, 172, 98], [38, 126, 72]], snow: [[232, 238, 246]],
       garland: [[240, 190, 70]], red: [[232, 64, 64]], gold: [[246, 196, 82]], blue: [[92, 132, 236]],
-      trunk: [[124, 86, 54]], ground: [[110, 120, 140]], off: [[78, 84, 96]], star: [[255, 214, 110]],
+      trunk: [[132, 92, 58], [110, 76, 46]], ground: [[110, 120, 140]], off: [[78, 84, 96]], star: [[255, 214, 110]],
       lights: [[255, 214, 120], [255, 112, 92], [124, 172, 255], [255, 238, 196]],
     },
     light: {
       needle: [[30, 106, 58], [42, 122, 68], [22, 90, 52]], snow: [[146, 160, 182]],
       garland: [[190, 134, 18]], red: [[204, 46, 46]], gold: [[198, 142, 24]], blue: [[46, 86, 204]],
-      trunk: [[108, 70, 40]], ground: [[160, 168, 184]], off: [[170, 175, 184]], star: [[214, 150, 20]],
+      trunk: [[112, 74, 42], [92, 60, 34]], ground: [[160, 168, 184]], off: [[170, 175, 184]], star: [[214, 150, 20]],
       lights: [[236, 150, 10], [226, 58, 46], [36, 98, 226], [214, 160, 30]],
     },
   };
@@ -64,7 +64,7 @@
   const rnd = (a, b) => a + Math.random() * (b - a);
   const smooth = y => 0.03 + 0.4 * Math.pow(1 - y, 1.08);
   const env = y => smooth(y) * (0.86 + 0.14 * (1 - ((y * 5.5) % 1))); // little steps so it looks like branches
-  const GROUND = -0.06;
+  const GROUND = -0.2; // low enough that the trunk shows under the bottom branches
   const pts = [];
   const add = (x, y, z, kind, o = {}) => {
     const n = o.n || [x, 0.35, z];
@@ -92,9 +92,9 @@
     });
     n++;
   }
-  for (let i = 0; i < 90; i++) {
-    const th = rnd(0, TAU), y = rnd(GROUND, 0.03);
-    add(Math.cos(th) * 0.045, y, Math.sin(th) * 0.045, 'trunk', { ch: '|', n: [Math.cos(th), 0, Math.sin(th)], delay: 0.1 });
+  for (let i = 0; i < 320; i++) {
+    const th = rnd(0, TAU), y = rnd(GROUND, 0.05), r = 0.065 + (y < GROUND + 0.03 ? 0.02 : 0); // flares out a bit at the base
+    add(Math.cos(th) * r, y, Math.sin(th) * r, 'trunk', { ch: '|#'[i % 2], v: i % 2, n: [Math.cos(th), 0, Math.sin(th)], delay: 0.1 });
   }
   // snow on the ground, fading out at the edges so it blends into the page
   for (let i = 0; i < 700; i++) {
@@ -211,7 +211,7 @@
     ctx.clearRect(0, 0, W, H);
     const ang = reduce ? 0.6 : T * 0.33, ca = Math.cos(ang), sa = Math.sin(ang);
     const cp = Math.cos(0.2), sp = Math.sin(0.2);
-    const S = H * 0.72, cx = W / 2, baseY = H * 0.86;
+    const S = H * 0.64, cx = W / 2, baseY = H * 0.78;
     const sinceShake = T - shakeAt, sway = sinceShake < 2 ? Math.exp(-sinceShake * 3) * Math.sin(sinceShake * 24) * S * 0.05 : 0;
 
     zbuf.fill(-1e9); win.fill(-1);
